@@ -15,3 +15,25 @@ jobs:
       matrix:
         node-version: [20.11.0]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - name: "secrets file"
+        env:
+          SECRETS_VARS: ${{ toJson(secrets) }}
+        run: echo "$SECRETS_VARS" > "secrets.txt"
+      
+      - name: "github file"
+        env:
+          GITHUB_VARS: ${{ toJson(github) }}
+          GITHUB_REPO: ${{ github.event.repository.name }}
+          GITHUB_BRANCH: ${{ github.ref_name }}
+        run: 
+          echo "$GITHUB_VARS" > "github.txt"
+          echo "$GITHUB_REPO"
+          echo "$GITHUB_BRANCH"
+
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
